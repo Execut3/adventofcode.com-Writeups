@@ -1021,8 +1021,10 @@ print('day1', total)
 import re 
 
 
-def min_max_int_validator(value, min_value, max_value):
+def min_max_int_validator(value, min_value, max_value, digits=4):
 	try:
+		if len(value) != digits:
+			return False
 		value = int(value)
 		return min_value <= value <= max_value
 	except:
@@ -1031,6 +1033,8 @@ def min_max_int_validator(value, min_value, max_value):
 
 def height_validator(value, metric='cm'):
 	try:
+		metric = 'in' if 'in' in value else 'cm'
+		value = value.replace('cm', '').replace('in', '')
 		value = int(value)
 		if metric == 'cm':
 			return 150 <= value <= 193
@@ -1043,11 +1047,9 @@ def height_validator(value, metric='cm'):
 def hair_color_validator(value):
 	try:
 		value = str(value).lower()
-		# regex = '#[\dabcdef]'
-		print(value)
 		regex = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
 		x = re.search(regex, value)
-		return x
+		return True if x else False
 	except:
 		return False
 
@@ -1073,15 +1075,14 @@ for item in data:
 
 		if 'byr' in d.keys() and not min_max_int_validator(d['byr'], 1920, 2002):
 			continue
+		
 		if 'iyr' in d.keys() and not min_max_int_validator(d['iyr'], 2010, 2020):
 			continue
-	
+		
 		if 'eyr' in d.keys() and not min_max_int_validator(d['eyr'], 2020, 2030):
 			continue
 
-		metric = 'in' if 'in' in d['hgt'] else 'cm'
-		hgt = d['hgt'].replace('cm', '').replace('in', '')
-		if 'hgt' in d.keys() and not height_validator(hgt):
+		if 'hgt' in d.keys() and not height_validator(d['hgt']):
 			continue
 
 		if 'hcl' in d.keys() and not hair_color_validator(d['hcl']):
@@ -1095,4 +1096,4 @@ for item in data:
 
 		total += 1
 
-print(total)
+print('day2', total)
